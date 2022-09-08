@@ -1,0 +1,10 @@
+# Build results 
+[Oo]bj/
+[Bb]in/
+artifacts/
+
+# Editor files
+.vscode/
+
+# System files
+*DS_Store
