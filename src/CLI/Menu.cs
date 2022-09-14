@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Sharprompt;
 using Sharprompt.Fluent;
+using Woolly.User;
 
 namespace Woolly.CLI
 {
@@ -8,7 +9,7 @@ namespace Woolly.CLI
 	{
 		private readonly static string[] MenuItems = { "Toot", "Exit" };
 
-		public static void Run(Login session)
+		public static void Run(Session session)
 		{
 			bool isExiting = false;
 			while (!isExiting)
