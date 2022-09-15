@@ -1,4 +1,4 @@
-# Wolly
+# Woolly
 ## __A Mastodon terminal client__
 
 ### Build

@@ -1,9 +1,8 @@
 using System.Threading.Tasks;
 using TootNet;
-using Sharprompt;
 using Woolly.User;
 
-namespace Woolly.CLI
+namespace Woolly.User
 {
 	public class Session
 	{

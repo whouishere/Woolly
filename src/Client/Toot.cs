@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using TootNet;
 using TootNet.Objects;
 
-namespace Woolly.CLI
+namespace Woolly.Client
 {
 	public class Toot
 	{
