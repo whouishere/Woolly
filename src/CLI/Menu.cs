@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using TootNet.Objects;
 using Sharprompt;
 using Sharprompt.Fluent;
 using Woolly.Client;
@@ -10,19 +12,45 @@ namespace Woolly.CLI
 	public class Menu
 	{
 		private static readonly string[] MenuItems = { "Toot", "Exit" };
+		private static readonly List<string> Items = new List<string>(){ "Toot", "Exit" };
 
-		private static Task WriteToot(Session session)
+		private static async Task<Status> WriteTootAsync(Session session)
 		{
+			// TODO: broken?
 			var content = Prompt.Input<string>("Write your Toot");
-			return Toot.Post(session.GetAppTokens(), content);
+			return await Toot.PostAsync(session.GetAppTokens(), content);
 		}
 
 		public static async void Run(Session session)
 		{
 			bool isExiting = false;
+			bool haveTooted = false;
+			Task<Status>? status = null;
+
 			while (!isExiting)
 			{
 				Console.Clear();
+
+				if (haveTooted)
+				{	
+					try
+					{
+						if (status != null) 
+						{
+							var post = await status;
+							Console.WriteLine($"Toot posted at {post.Url}.");
+							haveTooted = false;
+						} 
+						else 
+						{
+							throw new NullReferenceException();
+						}
+					}
+					catch
+					{
+						Console.WriteLine("Something went wrong. Toot again.");
+					}
+				}
 
 				var choice = Prompt.Select<string>(o => o.WithMessage("What woolly you do?")
 														 .WithItems(MenuItems));
@@ -33,7 +61,8 @@ namespace Woolly.CLI
 				switch (choice)
 				{
 					case "Toot":
-						await WriteToot(session);
+						status = WriteTootAsync(session);
+						haveTooted = true;
 						break;
 					case "Exit":
 						isExiting = true;

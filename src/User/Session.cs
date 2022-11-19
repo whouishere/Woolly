@@ -15,7 +15,7 @@ namespace Woolly.User
         {
             this.user = user;
 			var authTask = GetAuth();
-			Task.WaitAll(authTask);
+			Task.WhenAll(authTask);
 
 			(oauth, tokens) = authTask.Result;
         }
@@ -24,7 +24,7 @@ namespace Woolly.User
 		{
 			user = new LoginInfo(instance, email, password);
 			var authTask = GetAuth();
-			Task.WaitAll(authTask);
+			Task.WhenAll(authTask);
 
 			(oauth, tokens) = authTask.Result;
 		}
