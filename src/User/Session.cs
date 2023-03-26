@@ -34,7 +34,7 @@ namespace Woolly.User
 		private async Task<(Authorize, Tokens)> GetAuth()
 		{
 			var oauth = new Authorize();
-			await oauth.CreateApp(user.instance, "Woolly", Scope.Read | Scope.Write);
+			await oauth.CreateApp(user.instance, "Woolly", Scope.Read | Scope.Write, "https://codeberg.org/whou/Woolly");
 			var tokens = await oauth.AuthorizeWithEmail(user.email, user.password);
 
 			return (oauth, tokens);
