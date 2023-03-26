@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using TootNet.Objects;
 using Sharprompt;
@@ -12,7 +11,6 @@ namespace Woolly.CLI
 	public class Menu
 	{
 		private static readonly string[] MenuItems = { "Toot", "Exit" };
-		private static readonly List<string> Items = new List<string>(){ "Toot", "Exit" };
 
 		private static async Task<Status> WriteTootAsync(Session session)
 		{
@@ -21,7 +19,7 @@ namespace Woolly.CLI
 			return await Toot.PostAsync(session.GetAppTokens(), content);
 		}
 
-		public static async void Run(Session session)
+		public static void Run(Session session)
 		{
 			bool isExiting = false;
 			bool haveTooted = false;
@@ -37,7 +35,8 @@ namespace Woolly.CLI
 					{
 						if (status != null) 
 						{
-							var post = await status;
+							Task.WaitAll(status);
+							var post = status.Result;
 							Console.WriteLine($"Toot posted at {post.Url}.");
 							haveTooted = false;
 						} 
