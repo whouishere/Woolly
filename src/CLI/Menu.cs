@@ -1,3 +1,4 @@
+using Kurukuru;
 using System;
 using System.Threading.Tasks;
 using TootNet.Objects;
@@ -14,7 +15,6 @@ namespace Woolly.CLI
 
 		private static async Task<Status> WriteTootAsync(Session session)
 		{
-			// TODO: broken?
 			var content = Prompt.Input<string>("Write your Toot");
 			return await Toot.PostAsync(session.GetAppTokens(), content);
 		}
@@ -35,6 +35,11 @@ namespace Woolly.CLI
 					{
 						if (status != null) 
 						{
+							Spinner.Start("Tooting in process...", spinner => {
+								Task.WaitAll(status);
+								spinner.Succeed("Tooted successfully!");
+							}, Patterns.Dots);
+
 							Task.WaitAll(status);
 							var post = status.Result;
 							Console.WriteLine($"Toot posted at {post.Url}.");
