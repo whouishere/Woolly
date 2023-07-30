@@ -2,12 +2,10 @@
 ## __A Mastodon terminal client__
 
 ### Build
-Build and run the project with
+You can build the project with
 ```
-dotnet build
-dotnet run --project src/Woolly.csproj
+dotnet build --configuration Release
 ```
-
 The project's executable will be inside `artifacts/`.
 
 ### What is a "Woolly"?
