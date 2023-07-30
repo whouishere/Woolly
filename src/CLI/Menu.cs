@@ -11,13 +11,7 @@ namespace Woolly.CLI
 {
 	public class Menu
 	{
-		private static readonly string[] MenuItems = { "Toot", "Exit" };
-
-		private static async Task<Status> WriteTootAsync(Session session)
-		{
-			var content = Prompt.Input<string>("Write your Toot");
-			return await Toot.PostAsync(session.GetAppTokens(), content);
-		}
+		private static readonly string[] MenuItems = { "Toot", "Multiline Toot", "Exit" };
 
 		public static void Run(Session session)
 		{
@@ -59,13 +53,14 @@ namespace Woolly.CLI
 				var choice = Prompt.Select<string>(o => o.WithMessage("What woolly you do?")
 														 .WithItems(MenuItems));
 
-				// TODO: come up with a better implementation
-				// because i know a switch-case statement for 
-				// every menu option will be a nightmare to maintain
 				switch (choice)
 				{
 					case "Toot":
 						status = WriteTootAsync(session);
+						haveTooted = true;
+						break;
+					case "Multiline Toot":
+						status = WriteMultilineTootAsync(session);
 						haveTooted = true;
 						break;
 					case "Exit":
@@ -73,6 +68,43 @@ namespace Woolly.CLI
 						break;
 				}
 			}
+		}
+
+		private static async Task<Status> WriteMultilineTootAsync(Session session)
+		{
+			string content = "";
+			bool onEnd = false;
+
+			while (!onEnd)
+			{
+				string? line = Prompt.Input<string>("");
+				if (line is null)
+				{
+					line = "\n";
+				}
+
+				// if this is the second empty line
+				if (line == "\n" && content.EndsWith('\n'))
+				{
+					onEnd = true;
+					break;
+				}
+
+				content += line;
+			}
+
+			if (content == "")
+			{
+				return await Task.FromException<Status>(new TaskCanceledException());
+			}
+
+			return await Toot.PostAsync(session.GetAppTokens(), content);
+		}
+
+		private static async Task<Status> WriteTootAsync(Session session)
+		{
+			var content = Prompt.Input<string>("Write your Toot");
+			return await Toot.PostAsync(session.GetAppTokens(), content);
 		}
 	}
 }
