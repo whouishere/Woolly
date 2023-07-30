@@ -1,6 +1,6 @@
+using System;
 using System.Threading.Tasks;
 using TootNet;
-using Woolly.User;
 
 namespace Woolly.User
 {
@@ -26,7 +26,14 @@ namespace Woolly.User
 			var authTask = GetAuth();
 			Task.WhenAll(authTask);
 
-			(oauth, tokens) = authTask.Result;
+			try
+			{
+				(oauth, tokens) = authTask.Result;
+			}
+			catch (AggregateException e)
+			{
+				throw e.InnerException!;
+			}
 		}
 
 		public Tokens GetAppTokens() => tokens;
