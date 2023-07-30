@@ -9,7 +9,7 @@
   <PropertyGroup>
     <Authors>Willian Vinagre</Authors>
     <Description>A Mastodon terminal client</Description>
-    <Copyright>Willian Vinagre 2022</Copyright>
+    <Copyright>Willian Vinagre 2023</Copyright>
     <Version>0.0.1</Version>
   </PropertyGroup>
 
@@ -18,6 +18,9 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+	  <Optimize>false</Optimize>
+	</PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
 	  <Optimize>true</Optimize>
 	</PropertyGroup>
 
