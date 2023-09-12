@@ -1,9 +1,7 @@
-using Kurukuru;
+using Spectre.Console;
+using Status = TootNet.Objects.Status;
 using System;
 using System.Threading.Tasks;
-using TootNet.Objects;
-using Sharprompt;
-using Sharprompt.Fluent;
 using Woolly.Client;
 using Woolly.User;
 
@@ -29,14 +27,15 @@ namespace Woolly.CLI
 					{
 						if (status != null) 
 						{
-							Spinner.Start("Tooting in process...", spinner => {
-								Task.WaitAll(status);
-								spinner.Succeed("Tooted successfully!");
-							}, Patterns.Dots);
+							AnsiConsole.Status()
+								.Spinner(Spinner.Known.Dots)
+								.Start("Tooting in process...", _ => {
+									Task.WaitAll(status);
+								});
 
 							Task.WaitAll(status);
 							var post = status.Result;
-							Console.WriteLine($"Toot posted at {post.Url}.");
+							AnsiConsole.MarkupLine($"[green]✓[/] Toot posted at {post.Url}.");
 							haveTooted = false;
 						} 
 						else 
@@ -46,12 +45,15 @@ namespace Woolly.CLI
 					}
 					catch
 					{
-						Console.WriteLine("Something went wrong. Toot again.");
+						AnsiConsole.MarkupLine("[red]Something went wrong.[/] Try tooting again.");
 					}
 				}
 
-				var choice = Prompt.Select<string>(o => o.WithMessage("What woolly you do?")
-														 .WithItems(MenuItems));
+				var choice = AnsiConsole.Prompt(
+					new SelectionPrompt<string>()
+						.Title("What woolly you do?")
+						.AddChoices(MenuItems)
+				);
 
 				switch (choice)
 				{
@@ -75,10 +77,17 @@ namespace Woolly.CLI
 			string content = "";
 			bool onEnd = false;
 
+			AnsiConsole.Clear();
+			AnsiConsole.WriteLine("Write your toot:\n");
+
 			while (!onEnd)
 			{
-				string? line = Prompt.Input<string>("");
-				if (line is null)
+				string? line = AnsiConsole.Prompt(
+					new TextPrompt<string>("")
+						.AllowEmpty()
+				);
+
+				if (string.IsNullOrEmpty(line))
 				{
 					line = "\n";
 				}
@@ -93,7 +102,7 @@ namespace Woolly.CLI
 				content += line;
 			}
 
-			if (content == "")
+			if (string.IsNullOrEmpty(content))
 			{
 				return await Task.FromException<Status>(new TaskCanceledException());
 			}
@@ -103,7 +112,8 @@ namespace Woolly.CLI
 
 		private static async Task<Status> WriteTootAsync(Session session)
 		{
-			var content = Prompt.Input<string>("Write your Toot");
+			AnsiConsole.Clear();
+			var content = AnsiConsole.Ask<string>("Write your toot:\n");
 			return await Toot.PostAsync(session.GetAppTokens(), content);
 		}
 	}
